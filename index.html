@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Listen to the full Harry Potter audiobook series online with persistent progress tracking and custom player controls.">
+    <title>Harry Potter Audiobooks Collection</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1c1c21;
+            --card-hover: #27272f;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2e2e38;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            padding: 2.5rem 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5r em;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Home Library Grid View */
+        #home-view.active {
+            display: grid;
+        }
+        #home-view {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            background-color: var(--card-hover);
+            border-color: var(--accent-color);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 280px;
+            background-color: #2b2b36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .book-info {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .book-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .book-info span {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Player View */
+        #player-view {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        #player-view.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: var(--card-hover);
+        }
+
+        .player-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .player-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .player-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .player-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        audio {
+            width: 100%;
+            margin: 1.5rem 0;
+            accent-color: var(--accent-color);
+        }
+
+        .chapter-list {
+            margin-top: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .chapter-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 0.25rem;
+        }
+
+        .chapter-item:hover {
+            background-color: var(--card-hover);
+            color: var(--text-main);
+        }
+
+        .chapter-item.active {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Harry Potter Audiobooks</h1>
+        <p>Full Cast Audio Collection &bull; Custom Player</p>
+    </header>
+
+    <main>
+        <!-- HOME VIEW (Book Grid) -->
+        <div id="home-view" class="active">
+            <!-- Generated dynamically via JavaScript -->
+        </div>
+
+        <!-- PLAYER VIEW (Single Dynamic Player) -->
+        <div id="player-view">
+            <button class="back-btn" onclick="showHome()">&#8592; Back to Library</button>
+            <div class="player-card">
+                <div class="player-header">
+                    <h2 id="current-book-title">Book Title</h2>
+                    <p id="current-chapter-title">Select a chapter below</p>
+                </div>
+                
+                <audio id="audio-player" controls></audio>
+
+                <div class="chapter-list" id="chapter-list-container">
+                    <!-- Chapters populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Harry Potter Audio Player. Built with HTML5 &amp; JavaScript.</p>
+    </footer>
+
+    <script>
+        // Define your 7 books and chapters here
+        const booksData = [
+            {
+                id: 1,
+                title: "Book 1: Philosopher's Stone",
+                coverEmoji: "⚡",
+                chapters: [
+                    { title: "Chapter 1: The Boy Who Lived", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+                    { title: "Chapter 2: The Vanishing Glass", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+                    { title: "Chapter 3: The Letters from No One", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Book 2: Chamber of Secrets",
+                coverEmoji: "🐍",
+                chapters: [
+                    { title: "Chapter 1: The Worst Birthday", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+                    { title: "Chapter 2: Dobby's Warning", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Book 3: Prisoner of Azkaban",
+                coverEmoji: "🦌",
+                chapters: [
+                    { title: "Chapter 1: Owl Post", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
+                    { title: "Chapter 2: Aunt Marge's Big Mistake", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Book 4: Goblet of Fire",
+                coverEmoji: "🐉",
+                chapters: [
+                    { title: "Chapter 1: The Riddle House", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+                    { title: "Chapter 2: The Scar", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }
+                ]
+            },
+            {
+                id: 5,
+                title: "Book 5: Order of the Phoenix",
+                coverEmoji: "🦅",
+                chapters: [
+                    { title: "Chapter 1: Dudley Demented", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
+                    { title: "Chapter 2: A Peck of Owls", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" }
+                ]
+            },
+            {
+                id: 6,
+                title: "Book 6: Half-Blood Prince",
+                coverEmoji: "🧪",
+                chapters: [
+                    { title: "Chapter 1: The Other Minister", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
+                    { title: "Chapter 2: Spinner's End", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }
+                ]
+            },
+            {
+                id: 7,
+                title: "Book 7: Deathly Hallows",
+                coverEmoji: "💀",
+                chapters: [
+                    { title: "Chapter 1: The Dark Lord Ascending", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" },
+                    { title: "Chapter 2: In Memoriam", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }
+                ]
+            }
+        ];
+
+        let currentBook = null;
+        let currentChapterIndex = 0;
+        const audioPlayer = document.getElementById('audio-player');
+
+        // Render Home Grid
+        function renderHome() {
+            const homeView = document.getElementById('home-view');
+            homeView.innerHTML = '';
+
+            booksData.forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.onclick = () => openBook(book.id);
+                card.innerHTML = `
+                    <div class="book-cover">${book.coverEmoji}</div>
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <span>Listen Now &rarr;</span>
+                    </div>
+                `;
+                homeView.appendChild(card);
+            });
+        }
+
+        // Open specific book player view
+        function openBook(bookId) {
+            currentBook = booksData.find(b => b.id === bookId);
+            document.getElementById('current-book-title').textContent = currentBook.title;
+            
+            document.getElementById('home-view').classList.remove('active');
+            document.getElementById('player-view').classList.add('active');
+
+            renderChapters();
+            
+            // Load progress from localStorage if available
+            const savedChapter = localStorage.getItem(`hp_book_${bookId}_chapter`) || 0;
+            const savedTime = localStorage.getItem(`hp_book_${bookId}_time`) || 0;
+            
+            loadChapter(parseInt(savedChapter), parseFloat(savedTime));
+        }
+
+        // Return to home view
+        function showHome() {
+            audioPlayer.pause();
+            document.getElementById('player-view').classList.remove('active');
+            document.getElementById('home-view').classList.add('active');
+        }
+
+        // Render chapters list for active book
+        function renderChapters() {
+            const container = document.getElementById('chapter-list-container');
+            container.innerHTML = '';
+
+            currentBook.chapters.forEach((ch, index) => {
+                const item = document.createElement('div');
+                item.className = `chapter-item ${index === currentChapterIndex ? 'active' : ''}`;
+                item.innerHTML = `<span>${ch.title}</span>`;
+                item.onclick = () => {
+                    loadChapter(index, 0);
+                    audioPlayer.play();
+                };
+                container.appendChild(item);
+            });
+        }
+
+        // Load specific chapter and time
+        function loadChapter(index, startTime = 0) {
+            currentChapterIndex = index;
+            const chapter = currentBook.chapters[index];
+            
+            document.getElementById('current-chapter-title').textContent = chapter.title;
+            audioPlayer.src = chapter.src;
+            audioPlayer.currentTime = startTime;
+
+            // Highlight active chapter in list
+            document.querySelectorAll('.chapter-item').forEach((el, idx) => {
+                if (idx === index) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        // Save progress to localStorage automatically
+        audioPlayer.ontimeupdate = () => {
+            if (currentBook) {
+                localStorage.setItem(`hp_book_${currentBook.id}_chapter`, currentChapterIndex);
+                localStorage.setItem(`hp_book_${currentBook.id}_time`, audioPlayer.currentTime);
+            }
+        };
+
+        // Initialize on load
+        renderHome();
+    </script>
+</body>
+</html>

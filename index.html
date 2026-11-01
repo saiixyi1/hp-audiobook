@@ -8,13 +8,13 @@
     <style>
         :root {
             --bg-color: #121214;
-            --card-bg: #1c1c21;
-            --card-hover: #27272f;
+            --card-bg: rgba(28, 28, 33, 0.85);
+            --card-hover: rgba(39, 39, 47, 0.95);
             --accent-color: #6366f1;
             --accent-hover: #4f46e5;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
-            --border-color: #2e2e38;
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -25,23 +25,41 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            /* Multi-color gradient */
+            background: linear-gradient(-45deg, #0f0c20, #1a1b35, #121214, #27153b);
+            background-size: 400% 400%;
+            /* Smooth continuous animation */
+            animation: gradientBG 15s ease infinite;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         header {
             text-align: center;
             padding: 2.5rem 1rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            background: rgba(18, 18, 20, 0.4);
         }
 
         header h1 {
             font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0.5r em;
+            margin-bottom: 0.5rem;
             background: linear-gradient(135deg, #818cf8, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -72,6 +90,7 @@
 
         .book-card {
             background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             overflow: hidden;
@@ -91,12 +110,14 @@
             width: 100%;
             height: 280px;
             background-color: #2b2b36;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--text-muted);
+            overflow: hidden;
             position: relative;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .book-info {
@@ -132,7 +153,7 @@
         }
 
         .back-btn {
-            background: none;
+            background: rgba(28, 28, 33, 0.6);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 0.5rem 1rem;
@@ -143,6 +164,7 @@
             align-items: center;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
+            backdrop-filter: blur(8px);
             transition: background 0.2s;
         }
 
@@ -152,6 +174,7 @@
 
         .player-card {
             background-color: var(--card-bg);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
@@ -206,8 +229,8 @@
         }
 
         .chapter-item.active {
-            background-color: rgba(99, 102, 241, 0.15);
-            color: var(--accent-color);
+            background-color: rgba(99, 102, 241, 0.25);
+            color: #a5b4fc;
             font-weight: 600;
         }
 
@@ -217,6 +240,8 @@
             font-size: 0.85rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            background: rgba(18, 18, 20, 0.4);
         }
     </style>
 </head>
@@ -279,7 +304,7 @@
                     { title: "Chapter 14: Norbert the Norwegian Ridgeback", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
                     { title: "Chapter 15: The Forbidden Forest", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
                     { title: "Chapter 16: Through the Trapdoor", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-                    { title: "Chapter 17: The Man with Two Faces", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+                    { title: "Chapter 17: The Man with Two Faces", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
                 ]
             },
             {
@@ -289,7 +314,7 @@
                 chapters: [
                     { title: "Chapter 1: The Worst Birthday", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
                     { title: "Chapter 2: Dobby's Warning", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-                    { title: "Chapter 3: The Burrow", src: "s" },
+                    { title: "Chapter 3: The Burrow", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
                     { title: "Chapter 4: At Flourish and Blotts", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 5: The Whomping Willow", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 6: Gilderoy Lockhart", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
@@ -301,10 +326,10 @@
                     { title: "Chapter 12: The Polyjuice Potion", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 13: The Very Secret Diary", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 14: Cornelius Fudge", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-                    { title: "Chapter 14: Cornelius Fudge", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+                    { title: "Chapter 15: Aragog", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 16: The Chamber of Secrets", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
                     { title: "Chapter 17: The Heir of Slytherin", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-                    { title: "Chapter 18: Dobby's Reward", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
+                    { title: "Chapter 18: Dobby's Reward", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }
                 ]
             },
             {
@@ -337,7 +362,7 @@
             {
                 id: 6,
                 title: "Book 6: Half-Blood Prince",
-                coverImg: "https://i.pinimg.com/736x/c8/9e/4b/c89e4b157c8cf8b7f6d050a40f0d9328.jpg",
+                coverImage: "https://i.pinimg.com/736x/c8/9e/4b/c89e4b157c8cf8b7f6d050a40f0d9328.jpg",
                 chapters: [
                     { title: "Chapter 1: The Other Minister", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
                     { title: "Chapter 2: Spinner's End", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }
@@ -368,7 +393,9 @@
                 card.className = 'book-card';
                 card.onclick = () => openBook(book.id);
                 card.innerHTML = `
-                    <div class="book-cover">${book.coverEmoji}</div>
+                    <div class="book-cover">
+                        <img src="${book.coverImage}" alt="${book.title}">
+                    </div>
                     <div class="book-info">
                         <h3>${book.title}</h3>
                         <span>Listen Now &rarr;</span>

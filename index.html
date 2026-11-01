@@ -243,6 +243,43 @@
             backdrop-filter: blur(8px);
             background: rgba(18, 18, 20, 0.4);
         }
+
+        /* Mobile Optimization for iPhone, Android, and small screens */
+@media (max-width: 768px) {
+    header {
+        padding: 1.5rem 1rem 1rem;
+    }
+
+    header h1 {
+        font-size: 1.5rem; /* Shrinks main title so it doesn't wrap awkwardly */
+    }
+
+    main {
+        padding: 1rem 0.75rem; /* Tighter padding on phone edges */
+    }
+
+    /* Change grid to show 2 neat columns side-by-side on phones */
+    #home-view {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .book-cover {
+        height: 180px; /* Shorter cover image height for mobile screens */
+    }
+
+    .book-info {
+        padding: 0.75rem;
+    }
+
+    .book-info h3 {
+        font-size: 0.9rem; /* Smaller book title font */
+    }
+
+    .player-card {
+        padding: 1rem; /* Fits the player view better on narrow phone displays */
+    }
+}
     </style>
 </head>
 <body>

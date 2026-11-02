@@ -37,15 +37,9 @@
         }
 
         @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         header {
@@ -70,12 +64,88 @@
             font-size: 0.95rem;
         }
 
+        /* House Theme Picker */
+        .house-picker {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .house-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .house-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .house-dot.gryffindor { background: #740001; }
+        .house-dot.slytherin { background: #1a472a; }
+        .house-dot.ravenclaw { background: #0e1a40; }
+        .house-dot.hufflepuff { background: #ecb939; }
+
+        body.theme-gryffindor { --accent-color: #ae0001; --accent-hover: #740001; }
+        body.theme-slytherin { --accent-color: #2a623d; --accent-hover: #1a472a; }
+        body.theme-ravenclaw { --accent-color: #222f5b; --accent-hover: #0e1a40; }
+        body.theme-hufflepuff { --accent-color: #f0c75e; --accent-hover: #ecb939; }
+
         main {
             flex: 1;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             padding: 2rem 1rem;
+        }
+
+        /* Continue Listening Resume Banner */
+        .resume-banner {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-label {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .resume-info h4 {
+            font-size: 1rem;
+            margin: 0.2rem 0;
+        }
+
+        .resume-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .resume-btn {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .resume-btn:hover {
+            background-color: var(--accent-hover);
         }
 
         /* Home Library Grid View */
@@ -202,6 +272,33 @@
             accent-color: var(--accent-color);
         }
 
+        /* Extra Player Controls (Speed & Sleep Timer) */
+        .player-controls-extra {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .player-controls-extra select {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
         .chapter-list {
             margin-top: 1.5rem;
             max-height: 300px;
@@ -286,9 +383,25 @@
     <header>
         <h1>Harry Potter Audiobooks</h1>
         <p>Full Cast Audio Collection &bull; Special thanks to my patience</p>
+        <div class="house-picker">
+            <span class="house-dot gryffindor" title="Gryffindor" onclick="setHouseTheme('gryffindor')"></span>
+            <span class="house-dot slytherin" title="Slytherin" onclick="setHouseTheme('slytherin')"></span>
+            <span class="house-dot ravenclaw" title="Ravenclaw" onclick="setHouseTheme('ravenclaw')"></span>
+            <span class="house-dot hufflepuff" title="Hufflepuff" onclick="setHouseTheme('hufflepuff')"></span>
+        </div>
     </header>
 
     <main>
+        <!-- RESUME BANNER -->
+        <div id="resume-banner" class="resume-banner" style="display: none;">
+            <div class="resume-info">
+                <span class="resume-label">LAST LISTENED</span>
+                <h4 id="resume-title">Book Title</h4>
+                <p id="resume-chapter">Chapter Title</p>
+            </div>
+            <button class="resume-btn" onclick="resumePlayback()">&#9654; Resume</button>
+        </div>
+        
         <!-- HOME VIEW (Book Grid) -->
         <div id="home-view" class="active">
             <!-- Generated dynamically via JavaScript -->
@@ -304,6 +417,30 @@
                 </div>
                 
                 <audio id="audio-player" controls preload="auto"></audio>
+
+                <!-- Speed & Sleep Timer Controls -->
+                <div class="player-controls-extra">
+                    <div class="control-group">
+                        <label for="speed-select">Speed:</label>
+                        <select id="speed-select" onchange="changeSpeed(this.value)">
+                            <option value="1">1x (Normal)</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="sleep-select">Sleep Timer:</label>
+                        <select id="sleep-select" onchange="setSleepTimer(this.value)">
+                            <option value="0">Off</option>
+                            <option value="15">15 Minutes</option>
+                            <option value="30">30 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                            <option value="eoc">End of Chapter</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="chapter-list" id="chapter-list-container">
                     <!-- Chapters populated dynamically -->
                 </div>
@@ -655,11 +792,88 @@
             });
         }
 
+        // Playback Speed Controller
+        function changeSpeed(speed) {
+            audioPlayer.playbackRate = parseFloat(speed);
+            localStorage.setItem('hp_playback_speed', speed);
+        }
+
+        audioPlayer.onplay = () => {
+            const savedSpeed = localStorage.getItem('hp_playback_speed') || 1;
+            audioPlayer.playbackRate = parseFloat(savedSpeed);
+            document.getElementById('speed-select').value = savedSpeed;
+        };
+
+        // Sleep Timer Controller
+        function setSleepTimer(val) {
+            if (sleepTimerTimeout) {
+                clearTimeout(sleepTimerTimeout);
+                sleepTimerTimeout = null;
+            }
+
+            if (val === '0') return;
+
+            if (val === 'eoc') {
+                audioPlayer.onended = () => {
+                    audioPlayer.pause();
+                    document.getElementById('sleep-select').value = '0';
+                };
+            } else {
+                const minutes = parseInt(val);
+                const ms = minutes * 60 * 1000;
+                sleepTimerTimeout = setTimeout(() => {
+                    audioPlayer.pause();
+                    document.getElementById('sleep-select').value = '0';
+                    alert('Sleep timer reached. Audio paused.');
+                }, ms);
+            }
+        }
+
+        // House Theme Picker
+        function setHouseTheme(house) {
+            document.body.className = '';
+            if (house) {
+                document.body.classList.add(`theme-${house}`);
+                localStorage.setItem('hp_house_theme', house);
+            }
+        }
+
+        const savedHouse = localStorage.getItem('hp_house_theme');
+        if (savedHouse) {
+            setHouseTheme(savedHouse);
+        }
+
+        // Resume Banner Management
+        function checkResumeBanner() {
+            const lastBookId = localStorage.getItem('hp_last_book_id');
+            const lastChapterIdx = localStorage.getItem('hp_last_chapter_idx');
+
+            if (lastBookId !== null && lastChapterIdx !== null) {
+                const book = booksData.find(b => b.id === parseInt(lastBookId));
+                if (book && book.chapters[lastChapterIdx]) {
+                    document.getElementById('resume-title').textContent = book.title;
+                    document.getElementById('resume-chapter').textContent = book.chapters[lastChapterIdx].title;
+                    document.getElementById('resume-banner').style.display = 'flex';
+                    return;
+                }
+            }
+            document.getElementById('resume-banner').style.display = 'none';
+        }
+
+        function resumePlayback() {
+            const lastBookId = parseInt(localStorage.getItem('hp_last_book_id'));
+            if (!isNaN(lastBookId)) {
+                openBook(lastBookId);
+            }
+        }
+
         // Save progress to localStorage automatically
         audioPlayer.ontimeupdate = () => {
             if (currentBook) {
                 localStorage.setItem(`hp_book_${currentBook.id}_chapter`, currentChapterIndex);
                 localStorage.setItem(`hp_book_${currentBook.id}_time`, audioPlayer.currentTime);
+                localStorage.setItem('hp_last_book_id', currentBook.id);
+                localStorage.setItem('hp_last_chapter_idx', currentChapterIndex);
             }
         };
 

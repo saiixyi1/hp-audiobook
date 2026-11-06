@@ -712,25 +712,22 @@
 
         // Render Home Grid
         function renderHome() {
-    const homeView = document.getElementById('home-view');
-    homeView.innerHTML = '';
+            const homeView = document.getElementById('home-view');
+            homeView.innerHTML = '';
 
-    booksData.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'book-card';
-        card.onclick = () => openBook(book.id);
-        card.innerHTML = `
-            <div class="book-cover">
-                <img src="${book.coverImage}" alt="${book.title}">
-            </div>
-                <h3>${book.title}</h3>
-            </div>
-        `;
-        homeView.appendChild(card);
-    });
-    checkResumeBanner();
-
-}
+            booksData.forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.onclick = () => openBook(book.id);
+                card.innerHTML = `
+                    <div class="book-cover">
+                        <img src="${book.coverImage}" alt="${book.title}">
+                    </div>
+                `;
+                homeView.appendChild(card);
+            });
+            checkResumeBanner();
+        }
 
         // Open specific book player view
         function openBook(bookId, chapterIndex = null, startTime = null, autoplay = false) {

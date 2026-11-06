@@ -719,16 +719,6 @@
                 const card = document.createElement('div');
                 card.className = 'book-card';
                 card.onclick = () => openBook(book.id);
-                card.innerHTML = `
-                    <div class="book-cover">
-                        <img src="${book.coverImage}" alt="${book.title}">
-                        </div>
-                    </div>
-                    <div class="book-info">
-                        <h3>${book.title}</h3>
-                        <span>Listen Now &rarr;</span>
-                    </div>
-                `;
                 homeView.appendChild(card);
             });
         }

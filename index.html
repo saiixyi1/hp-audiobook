@@ -723,7 +723,6 @@
             <div class="book-cover">
                 <img src="${book.coverImage}" alt="${book.title}">
             </div>
-            <div class="book-info">
                 <h3>${book.title}</h3>
             </div>
         `;
@@ -731,6 +730,7 @@
     });
     checkResumeBanner();
 
+}
 
         // Open specific book player view
         function openBook(bookId, chapterIndex = null, startTime = null, autoplay = false) {

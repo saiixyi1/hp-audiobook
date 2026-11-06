@@ -722,7 +722,7 @@
                 card.innerHTML = `
                     <div class="book-cover">
                         <img src="${book.coverImage}" alt="${book.title}">
-                        <div class="book-cover">
+                        </div>
                     </div>
                     <div class="book-info">
                         <h3>${book.title}</h3>
@@ -790,9 +790,6 @@
 
             audioPlayer.src = chapter.src;
             audioPlayer.load();
-            
-            }
-        
 
             // Highlight active chapter in list
             document.querySelectorAll('.chapter-item').forEach((el, idx) => {

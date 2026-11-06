@@ -733,7 +733,7 @@
         }
 
         // Open specific book player view
-        function openBook(bookId) {
+        function openBook(bookId, chapterIndex = null, startTime = null, autoplay = false) {
             currentBook = booksData.find(b => b.id === bookId);
             document.getElementById('current-book-title').textContent = currentBook.title;
             
@@ -774,13 +774,23 @@
         }
 
         // Load specific chapter and time
-        function loadChapter(index, startTime = 0) {
+        function loadChapter(index, startTime = 0, autoplay = false) {
             currentChapterIndex = index;
             const chapter = currentBook.chapters[index];
             
             document.getElementById('current-chapter-title').textContent = chapter.title;
-            audioPlayer.src = chapter.src;
+        audioPlayer.onloadmetadata = () => {
             audioPlayer.currentTime = startTime;
+
+            if (autoplay) {
+                    audioPlayer.play().catch(console.error):
+            }
+
+        };
+
+        audioPlayer.src = chapter.src;
+        audioPlayer.load();
+        
 
             // Highlight active chapter in list
             document.querySelectorAll('.chapter-item').forEach((el, idx) => {
@@ -861,10 +871,27 @@
         }
 
         function resumePlayback() {
-            const lastBookId = parseInt(localStorage.getItem('hp_last_book_id'));
-            if (!isNaN(lastBookId)) {
-                openBook(lastBookId);
+            const lastBookId =
+        localStorage.getItem( 'hp_last-book-id' );
+            const lastChapterIdx =
+        localStorage,getItem( 'hp_last_chapter-idx' );
+
+            if (lastBookid === null || lastChapterIdx === null)
+        {
+                checkResumeBanner();
+                return;
             }
+
+            const savedTime = localStorage.getItem(
+                'hp_book${lastBookId}_time'
+            ) || 0:
+
+            openBook(
+                Number(lastBookId),
+                Number(lastChapterIdx).
+                Number(savedTime0,
+                true
+            );
         }
 
         // Save progress to localStorage automatically

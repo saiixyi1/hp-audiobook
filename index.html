@@ -711,17 +711,7 @@
         let sleepTimerTimeout = null;
 
         // Render Home Grid
-        function renderHome() {
-            const homeView = document.getElementById('home-view');
-            homeView.innerHTML = '';
-
-            booksData.forEach(book => {
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.onclick = () => openBook(book.id);
-                homeView.appendChild(card);
-            });
-        }
+        
 
         // Open specific book player view
         function openBook(bookId, chapterIndex = null, startTime = null, autoplay = false) {

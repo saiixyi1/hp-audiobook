@@ -708,6 +708,7 @@
         let currentBook = null;
         let currentChapterIndex = 0;
         const audioPlayer = document.getElementById('audio-player');
+        let sleepTimerTimeout = null;
 
         // Render Home Grid
         function renderHome() {
@@ -743,10 +744,10 @@
             renderChapters();
             
             // Load progress from localStorage if available
-            const savedChapter = localStorage.getItem(`hp_book_${bookId}_chapter`) || 0;
-            const savedTime = localStorage.getItem(`hp_book_${bookId}_time`) || 0;
+            const targetChapter = chapterIndex !== null ? chapterIndex : (parseInt(localStorage.getItem(`hp_book_${bookId}_chapter`)) || 0);
+            const targetTime = startTime !== null ? startTime : (parseFloat(localStorage.getItem(`hp_book_${bookId}_time`)) || 0);
             
-            loadChapter(parseInt(savedChapter), parseFloat(savedTime));
+            loadChapter(targetChapter, targetTime, autoplay);
         }
 
         // Return to home view
@@ -779,17 +780,18 @@
             const chapter = currentBook.chapters[index];
             
             document.getElementById('current-chapter-title').textContent = chapter.title;
-        audioPlayer.onloadmetadata = () => {
-            audioPlayer.currentTime = startTime;
+            
+        audioPlayer.onloadedmetadata = () => {
+                audioPlayer.currentTime = startTime;
+                if (autoplay) {
+                    audioPlayer.play().catch(err => console.log("Autoplay prevented:", err));
+                }
+            };
 
-            if (autoplay) {
-                    audioPlayer.play().catch(console.error):
+            audioPlayer.src = chapter.src;
+            audioPlayer.load();
+            
             }
-
-        };
-
-        audioPlayer.src = chapter.src;
-        audioPlayer.load();
         
 
             // Highlight active chapter in list
@@ -871,28 +873,25 @@
         }
 
         function resumePlayback() {
-            const lastBookId =
-        localStorage.getItem( 'hp_last-book-id' );
-            const lastChapterIdx =
-        localStorage,getItem( 'hp_last_chapter-idx' );
+            const lastBookId = localStorage.getItem('hp_last_book_id');
+            const lastChapterIdx = localStorage.getItem('hp_last_chapter_idx');
 
-            if (lastBookid === null || lastChapterIdx === null)
-        {
+            if (lastBookId === null || lastChapterIdx === null) {
                 checkResumeBanner();
                 return;
             }
 
-            const savedTime = localStorage.getItem(
-                'hp_book${lastBookId}_time'
-            ) || 0:
+            const savedTime = localStorage.getItem(`hp_book_${lastBookId}_time`) || 0;
 
             openBook(
-                Number(lastBookId),
-                Number(lastChapterIdx).
-                Number(savedTime0,
+                parseInt(lastBookId),
+                parseInt(lastChapterIdx),
+                parseFloat(savedTime),
                 true
             );
         }
+
+
 
         // Save progress to localStorage automatically
         audioPlayer.ontimeupdate = () => {
